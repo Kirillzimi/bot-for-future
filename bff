@@ -1,0 +1,58 @@
+import telebot
+import time
+import schedule
+
+from telebot import types
+bot = telebot.TeleBot("7209351629:AAFJ6tZbhgEJRHfBlVcXYOhhfor4GWS-2fs")
+
+@bot.message_handler(commands=['start'])
+def send_welcome(message):
+    # Send a welcome message
+    bot.reply_to(message, "Hello! I am your TelegramBot. Only we can save the environment. We can do it together.")
+    time.sleep(1)
+    bot.reply_to(message, "The first and the main things to save the environment are for example:")
+    time.sleep(1)
+    bot.reply_to(message, "1. Reduce your carbon footprint")
+    time.sleep(1)
+    bot.reply_to(message, "2. Do not contaminate the environment")
+    time.sleep(1)
+    bot.reply_to(message, "3. Give things a second life")
+    time.sleep(1)
+    bot.reply_to(message, "Let's start by reducing your carbon footprint.")
+    time.sleep(1)
+    bot.reply_to(message, "Firstly, we have to find out your carbon footprint. Here is the website: https://footprint.wwf.org.uk/")
+
+@bot.message_handler(content_types=['photo'])
+def handle_photo(message):
+    bot.reply_to(message, "Hmmmmmm... There is something to change. But we can make this together. Click on /letsgo")
+    bot.send_photo(message.chat.id, "https://example.com/reply-image.jpg")
+
+@bot.message_handler(commands=['letsgo'])
+def send_letsgo(message):
+    bot.reply_to(message, "1. Lets reduce your carbon footprint")
+    time.sleep(1)
+    bot.reply_to(message, "I think riding on a bike instead of car is not a bad idea!")
+    time.sleep(1)
+    bot.reply_to(message, "I will make a alarm for you every morning to remember you to ride a bike.")
+    
+    def job():
+        print("I'm working...")
+
+    schedule.every(1).minutes.do(job)
+
+    while True:
+        schedule.run_pending()
+        time.sleep(1)
+
+
+#@bot.message_handler(commands=['letsgo'])
+#def send_letsgo(message):
+#    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
+#    button1 = types.KeyboardButton("/letsgo")
+#    button2 = types.KeyboardButton("Button_2")
+#    keyboard.add(button1, button2)
+#
+#    bot.send_message(message.chat.id, "Let's get started!", reply_markup=keyboard)
+
+print("BOT started")
+bot.polling()
