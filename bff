@@ -4,7 +4,7 @@ import schedule
 import asyncio
 from telebot import types
 
-bot = telebot.TeleBot("7209351629:AAFJ6tZbhgEJRHfBlVcXYOhhfor4GWS-2fs")
+bot = telebot.TeleBot("bot.token")
 chat_id_for_alarm = None
 
 @bot.message_handler(commands=['start'])
