@@ -1,13 +1,14 @@
 import telebot
 import time
 import schedule
-
+import asyncio
 from telebot import types
+
 bot = telebot.TeleBot("7209351629:AAFJ6tZbhgEJRHfBlVcXYOhhfor4GWS-2fs")
+chat_id_for_alarm = None
 
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
-    # Send a welcome message
     bot.reply_to(message, "Hello! I am your TelegramBot. Only we can save the environment. We can do it together.")
     time.sleep(1)
     bot.reply_to(message, "The first and the main things to save the environment are for example:")
@@ -29,30 +30,50 @@ def handle_photo(message):
 
 @bot.message_handler(commands=['letsgo'])
 def send_letsgo(message):
-    bot.reply_to(message, "1. Lets reduce your carbon footprint")
+    global chat_id_for_alarm
+    chat_id_for_alarm = message.chat.id
+
+    bot.reply_to(message, "1. Let's reduce your carbon footprint.")
     time.sleep(1)
-    bot.reply_to(message, "I think riding on a bike instead of car is not a bad idea!")
+    bot.reply_to(message, "I think riding on a bike instead of a car is not a bad idea!")
     time.sleep(1)
-    bot.reply_to(message, "I will make a alarm for you every morning to remember you to ride a bike.")
+    bot.reply_to(message, "I will make an alarm for you every morning to remind you to ride a bike.")
     
     def job():
-        print("I'm working...")
+        if chat_id_for_alarm:
+            bot.send_message(chat_id_for_alarm, "Good morning! Don't forget to ride your bike today! 🚴‍♂️")
+    
+    schedule.every().day.at("08:00").do(job)
 
-    schedule.every(1).minutes.do(job)
+@bot.message_handler(commands=['yes'])
+def send_yes(message):
+    bot.reply_to(message, "2. Here are my tips for you to buy environmentally friendly products:")
+    time.sleep(2)
+    bot.reply_to(message, "bamboo toothbrushes: https://www.amazon.com/bamboo-toothbrush/s?k=bamboo+toothbrush")
+    time.sleep(2)
+    bot.reply_to(message, "compostable garbage bags: https://www.amazon.com/biodegradable-trash-bags/s?k=biodegradable+trash+bags")
+    time.sleep(2)
+    bot.reply_to(message, "environmentally friendly detergents: https://www.amazon.com/eco-friendly-laundry-detergent/s?k=eco+friendly+laundry+detergent")
+    time.sleep(2)
+    bot.reply_to(message, "HAHAHAHAHAHA if you want more, here is a whole store with these products!")
+    time.sleep(3)
+    bot.reply_to(message, "https://earthhero.com/?srsltid=AfmBOoqFHFOSqEOYVq4WIkqMgHlTTRzKR4GNjeqn_KPe_EXHxb5ku6Uw")
 
+async def run_scheduler():
+    """Runs the scheduler in an async loop."""
     while True:
         schedule.run_pending()
-        time.sleep(1)
+        await asyncio.sleep(60)  # Check tasks every 60 seconds
 
+def main():
+    loop = asyncio.get_event_loop()
+    
+    # Run the scheduler in the background
+    loop.create_task(run_scheduler())
+    
+    # Start polling in the main thread
+    print("BOT started")
+    bot.polling()
 
-#@bot.message_handler(commands=['letsgo'])
-#def send_letsgo(message):
-#    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
-#    button1 = types.KeyboardButton("/letsgo")
-#    button2 = types.KeyboardButton("Button_2")
-#    keyboard.add(button1, button2)
-#
-#    bot.send_message(message.chat.id, "Let's get started!", reply_markup=keyboard)
-
-print("BOT started")
-bot.polling()
+if __name__ == "__main__":
+    main()
